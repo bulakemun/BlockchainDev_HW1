@@ -4,5 +4,6 @@
   "description": "Homework 1",
   "main": "main.js",
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "type": "module"
 }
