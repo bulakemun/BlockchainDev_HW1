@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "description": "Homework 1",
   "main": "main.js",
+  "bin": "main.js",
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "inquirer": "^12.1.0"
+  }
 }
