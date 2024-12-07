@@ -42,10 +42,13 @@ program
                         },
                     ]);
                 case "Swap":
+                    break;
                 case "Havuz Durumunu Görüntüle":
                     console.log(chalk.green(`Pool Balance A: ${poolBalanceA}\nPool Balance B: ${poolBalanceB}\nRatio: ${ratio}`));
+                    break;
                 case "Kullanıcı Bakiyesini Görüntüle":
                     console.log(chalk.green(`User Balance A: ${userBalanceA}\nUser Balance B: ${userBalanceB}`));
+                    break;
                 case "Çıkış":
                     break;
             }
