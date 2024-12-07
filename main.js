@@ -7,12 +7,14 @@ import chalk from "chalk";
 import figlet from "figlet";
 
 const data = fs.readFileSync('data.json', 'utf8')
-let userBalanceA = JSON.parse(data).userBalance.tokenA;
-let userBalanceB = JSON.parse(data).userBalance.tokenB;
-let poolBalanceA = JSON.parse(data).pool.tokenA;
-let poolBalanceB = JSON.parse(data).pool.tokenB;
-let ratio = JSON.parse(data).pool.K;
-console.log(ratio);
+let parsedData = JSON.parse(data);
+const userBalanceA = parsedData.userBalance.tokenA;
+const userBalanceB = parsedData.userBalance.tokenB;
+const poolBalanceA = parsedData.pool.tokenA;
+const poolBalanceB = parsedData.pool.tokenB;
+const ratio = (parsedData.pool.A)/(parsedData.pool.B);
+parsedData.pool.tokenA = 99;
+// fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
 
 program
     .description("First Homework")
@@ -33,15 +35,51 @@ program
           .then((result) => {
             switch(result.choice) {
                 case "Likidite Ekle":
+                    inquirer
+                        .prompt([
+                            {
+                                type: "number",
+                                name: "numA",
+                                required: 1,
+                                message: "How much Token A would you like to add?",
+                                validate: ((num) => (num < userBalanceA))
+                            },
+                            {
+                                type: "number",
+                                name: "numB",
+                                required: 1,
+                                message: "How much Token B would you like to add?",
+                                validate: ((num) => (num < userBalanceB))
+                            },
+                        ])
+                        .then();
+                    break;
+                case "Swap":
                     inquirer.prompt([
                         {
                             type: "list",
-                            name: "num1",
-                            message: "Which coin would you like to add liq. to?:",
-                            choices: ["tokenA", "tokenB"]
+                            name: "direction",
+                            message: "Which direction?",
+                            choices: ["A --> B", "B --> A"]
                         },
-                    ]);
-                case "Swap":
+                    ])
+                    .then((result) => {
+                        switch(result.direction) {
+                            case "A --> B":
+                                inquirer.prompt([
+                                    {
+                                        type: "number",
+                                        name: "amount",
+                                        required: 1,
+                                        message: "How much?",
+                                        validate: ((num) => (num < userBalanceA && ((num/ratio) < poolBalanceB)))
+                                    }
+                                ])
+                                break;
+                            case "B --> A":
+                                break;
+                        };
+                    });
                     break;
                 case "Havuz Durumunu Görüntüle":
                     console.log(chalk.green(`Pool Balance A: ${poolBalanceA}\nPool Balance B: ${poolBalanceB}\nRatio: ${ratio}`));
