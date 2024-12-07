@@ -13,7 +13,6 @@ const userBalanceB = parsedData.userBalance.tokenB;
 const poolBalanceA = parsedData.pool.tokenA;
 const poolBalanceB = parsedData.pool.tokenB;
 const aTimesB = parsedData.pool.K;
-const ratio = poolBalanceA/poolBalanceB;
 // fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
 
 program
@@ -72,15 +71,21 @@ program
                                         name: "amount",
                                         required: 1,
                                         message: "How much?",
-                                        validate: ((num) => (num <= userBalanceA && ((num/ratio) < poolBalanceB)))
+                                        validate: ((num) => (num <= userBalanceA))
                                     }
                                 ])
-                                .then((result) => (
-                                    parsedData.userBalance.tokenA -= (result.amount),
-                                    parsedData.pool.tokenA += (result.amount),
-                                    parsedData.userBalance.tokenB += ((result.amount)/ratio),
-                                    parsedData.pool.tokenB -= ((result.amount)/ratio)
-                                ));
+                                .then((result) => {
+                                    const bBought = (parsedData.pool.tokenB * result.amount)/(parsedData.pool.tokenA + result.amount);
+                                    parsedData.userBalance.tokenA -= (result.amount);
+                                    parsedData.pool.tokenA += (result.amount);
+                                    parsedData.userBalance.tokenB += bBought;
+                                    parsedData.pool.tokenB -= bBought;
+                                    parsedData.userBalance.tokenA = parseFloat(parsedData.userBalance.tokenA.toFixed(2));
+                                    parsedData.userBalance.tokenB = parseFloat(parsedData.userBalance.tokenB.toFixed(2));
+                                    parsedData.pool.tokenA = parseFloat(parsedData.pool.tokenA.toFixed(2));
+                                    parsedData.pool.tokenB = parseFloat(parsedData.pool.tokenB.toFixed(2));
+                                    fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
+                                });
                                 break;
                             case "B --> A":
                                 inquirer.prompt([
@@ -89,24 +94,30 @@ program
                                         name: "amount",
                                         required: 1,
                                         message: "How much?",
-                                        validate: ((num) => (num <= userBalanceB && ((num*ratio) < poolBalanceA)))
+                                        validate: ((num) => (num <= userBalanceB))
                                     }
                                 ])
-                                .then((result) => (
-                                    parsedData.userBalance.tokenB -= (result.amount),
-                                    parsedData.pool.tokenB += (result.amount),
-                                    parsedData.userBalance.tokenA += ((result.amount)*ratio),
-                                    parsedData.pool.tokenA -= ((result.amount)*ratio)
-                                ))
+                                .then((result) => {
+                                    const aBought = (parsedData.pool.tokenA * result.amount)/(parsedData.pool.tokenB + result.amount);
+                                    parsedData.userBalance.tokenB -= (result.amount);
+                                    parsedData.pool.tokenB += (result.amount);
+                                    parsedData.userBalance.tokenA += aBought;
+                                    parsedData.pool.tokenA -= aBought;
+                                    parsedData.userBalance.tokenA = parseFloat(parsedData.userBalance.tokenA.toFixed(2));
+                                    parsedData.userBalance.tokenB = parseFloat(parsedData.userBalance.tokenB.toFixed(2));
+                                    parsedData.pool.tokenA = parseFloat(parsedData.pool.tokenA.toFixed(2));
+                                    parsedData.pool.tokenB = parseFloat(parsedData.pool.tokenB.toFixed(2));
+                                    fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
+                                });
                                 break;
                         };
                     });
                     break;
                 case "Havuz Durumunu Görüntüle":
-                    console.log(chalk.green(`Pool Balance A: ${poolBalanceA}\nPool Balance B: ${poolBalanceB}\nRatio: ${ratio}`));
+                    console.log(chalk.white.bold(`Pool Balance A: ${chalk.red(poolBalanceA)}\nPool Balance B: ${chalk.red(poolBalanceB)}\nConstant: ${chalk.red(aTimesB)}`));
                     break;
                 case "Kullanıcı Bakiyesini Görüntüle":
-                    console.log(chalk.green(`User Balance A: ${userBalanceA}\nUser Balance B: ${userBalanceB}`));
+                    console.log(chalk.white.bold(`User Balance A: ${chalk.red(userBalanceA)}\nUser Balance B: ${chalk.red(userBalanceB)}`));
                     break;
                 case "Çıkış":
                     break;
@@ -114,3 +125,4 @@ program
           });
       });
 program.parse(process.argv);
+
