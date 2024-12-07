@@ -12,8 +12,8 @@ const userBalanceA = parsedData.userBalance.tokenA;
 const userBalanceB = parsedData.userBalance.tokenB;
 const poolBalanceA = parsedData.pool.tokenA;
 const poolBalanceB = parsedData.pool.tokenB;
-const ratio = (parsedData.pool.A)/(parsedData.pool.B);
-parsedData.pool.tokenA = 99;
+const aTimesB = parsedData.pool.K;
+const ratio = poolBalanceA/poolBalanceB;
 // fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
 
 program
@@ -72,11 +72,32 @@ program
                                         name: "amount",
                                         required: 1,
                                         message: "How much?",
-                                        validate: ((num) => (num < userBalanceA && ((num/ratio) < poolBalanceB)))
+                                        validate: ((num) => (num <= userBalanceA && ((num/ratio) < poolBalanceB)))
                                     }
                                 ])
+                                .then((result) => (
+                                    parsedData.userBalance.tokenA -= (result.amount),
+                                    parsedData.pool.tokenA += (result.amount),
+                                    parsedData.userBalance.tokenB += ((result.amount)/ratio),
+                                    parsedData.pool.tokenB -= ((result.amount)/ratio)
+                                ));
                                 break;
                             case "B --> A":
+                                inquirer.prompt([
+                                    {
+                                        type: "number",
+                                        name: "amount",
+                                        required: 1,
+                                        message: "How much?",
+                                        validate: ((num) => (num <= userBalanceB && ((num*ratio) < poolBalanceA)))
+                                    }
+                                ])
+                                .then((result) => (
+                                    parsedData.userBalance.tokenB -= (result.amount),
+                                    parsedData.pool.tokenB += (result.amount),
+                                    parsedData.userBalance.tokenA += ((result.amount)*ratio),
+                                    parsedData.pool.tokenA -= ((result.amount)*ratio)
+                                ))
                                 break;
                         };
                     });

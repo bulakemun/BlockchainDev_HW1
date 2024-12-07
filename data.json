@@ -1,4 +1,4 @@
 {
     "pool" : { "tokenA": 1000, "tokenB": 1000, "K": 1000000 },
-    "userBalance" : { "tokenA": 500, "tokenB": 500 }
+    "userBalance" : { "tokenA": 1500, "tokenB": 1500 }
 }
