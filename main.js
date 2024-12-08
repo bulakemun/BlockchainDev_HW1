@@ -12,7 +12,8 @@ const userBalanceA = parsedData.userBalance.tokenA;
 const userBalanceB = parsedData.userBalance.tokenB;
 const poolBalanceA = parsedData.pool.tokenA;
 const poolBalanceB = parsedData.pool.tokenB;
-const aTimesB = parsedData.pool.K;
+const curPrice = Math.round(((parsedData.pool.tokenA/parsedData.pool.tokenB) + Number.EPSILON) * 100) / 100;
+// console.log(curPrice)
 // fs.writeFileSync('data.json', JSON.stringify(parsedData, null, 1));
 
 program
@@ -37,30 +38,48 @@ program
                     inquirer
                         .prompt([
                             {
-                                type: "number",
-                                name: "numA",
+                                type: "list",
+                                name: "direction",
                                 required: 1,
-                                message: "How much Token A would you like to add?",
-                                validate: ((num) => (num < userBalanceA))
-                            },
-                            {
-                                type: "number",
-                                name: "numB",
-                                required: 1,
-                                message: "How much Token B would you like to add?",
-                                validate: ((num) => (num < userBalanceB))
-                            },
+                                message: "From which token would you like to calculate from?",
+                                choices: ["From A", "From B"]
+                            }
                         ])
-                        .then();
+                        .then((result) => {
+                            switch(result.direction) {
+                                case "From A":
+                                    inquirer
+                                        .prompt([
+                                            {
+                                                type: "number",
+                                                name: "amount",
+                                                required: 1,
+                                                message: "How much A?",
+                                                validate: ((num) => (num <= userBalanceA))
+                                            }])
+                                        .then((result) => {
+                                            inquirer.prompt([{
+                                                type: "confirm",
+                                                name: "okay",
+                                                required: 1,
+                                                message: `You need ${Math.round((result.amount / curPrice + Number.EPSILON)*100)/100} B, confirm?`
+                                            }]);
+                                        })
+                                    break;
+                                case "From B":
+                                    break;
+                            };
+                        });
                     break;
                 case "Swap":
                     inquirer.prompt([
                         {
                             type: "list",
                             name: "direction",
+                            required: 1,
                             message: "Which direction?",
                             choices: ["A --> B", "B --> A"]
-                        },
+                        }
                     ])
                     .then((result) => {
                         switch(result.direction) {
