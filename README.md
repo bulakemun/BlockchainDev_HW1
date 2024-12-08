@@ -16,7 +16,7 @@ This project is a command-line application for managing a simple blockchain-base
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/BlockchainDev_HW1.git
+    git clone https://github.com/bulakemun/BlockchainDev_HW1.git
     cd BlockchainDev_HW1
     ```
 
