@@ -37,12 +37,12 @@ program
               type: "list",
               name: "choice",
               message: "Choose one:",
-              choices: ["Likidite Ekle", "Swap", "Havuz Durumunu Görüntüle", "Kullanıcı Bakiyesini Görüntüle", "Çıkış"]
+              choices: ["Add Liquidity", "Swap", "Show Pool Balances", "Show User Balances", "Quit"]
             },
           ])
           .then((result) => {
             switch(result.choice) {
-                case "Likidite Ekle":
+                case "Add Liquidity":
                     inquirer
                         .prompt([
                             {
@@ -198,13 +198,13 @@ program
                         };
                     });
                     break;
-                case "Havuz Durumunu Görüntüle":
+                case "Show Pool Balances":
                     console.log(chalk.white.bold(`Pool Balance A: ${chalk.red(poolBalanceA)}\nPool Balance B: ${chalk.red(poolBalanceB)}\nConstant: ${chalk.red(aTimesB)}`));
                     break;
-                case "Kullanıcı Bakiyesini Görüntüle":
+                case "Show User Balances":
                     console.log(chalk.white.bold(`User Balance A: ${chalk.red(userBalanceA)}\nUser Balance B: ${chalk.red(userBalanceB)}`));
                     break;
-                case "Çıkış":
+                case "Quit":
                     break;
             }
           });
